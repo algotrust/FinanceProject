@@ -2,6 +2,9 @@
 #include <sys/errno.h>
 #include <stdio.h>
 #include <stdexcept>
+#include <cstdlib>
+#include <iostream>
+#include <cstring>
 
 #define SBB_LINE_BUFFER_LENGTH 256
 #define SBB_INSTRUMENT_ID_LENGTH 32
@@ -64,7 +67,7 @@ class SBB_instrument_input_file {
 		void free_records();
 
 	private:
-		std::FILE* _file;
+		FILE* _file;
 		char _line_buf[SBB_LINE_BUFFER_LENGTH];
 		SBB_instrument_fields *_fields_array;
 	 

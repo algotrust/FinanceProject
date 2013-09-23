@@ -1,28 +1,27 @@
-#include "SBB_util.h"
+#include "Calculator.h"
+
 #include <stdio.h>
-#include <math.h>
 
 int main(int argc, char* argv[]){
+	if(argc != 2){
+		printf("Usage: price_calc inputfile\n");
+		exit(0);
+	}
 	SBB_util u;
 	START_TIMER(u);
-	printf("Hello World!\nThis is an simple test!\n");
-	int i = 100000000;
-	long n = 5;
-	while(i--) n++;
-	printf("Here n is %ld\n", n);	
-	END_TIMER(u);
-	return 0;	
-}
-
-double present_value(double future_value, double interest, int period){
-	return future_value/pow(1+interest, period);
-}
-
-double bond_PV(double coupon, double maturity, double interest, int n_period){
-	double sum = 0;
-	for(int i = 0 ; i < n_period ; i++){
-		sum += present_value(coupon, interest, i+1);
+	SBB_instrument_input_file input(argv[1]);
+	SBB_instrument_fields* ytm_data;
+	int input_length = 0;
+	ytm_data = input.get_records(input_length);
+	Calculator calc;
+	for(int i = 0 ; i < input_length ; i++){
+		calc.set_ytm_para(ytm_data+i);
+		printf("%s Bond Price: %.8f, DV01: %.8f\n", ytm_data[i].SecurityID, calc.calc_YTM(), calc.calc_YTM_DV01());
 	}
-	sum += present_value(maturity, interest, n_period);
-	return sum;
+	END_TIMER(u);
+	
+	input.free_records();
+
+
+	return 0;	
 }

@@ -3,7 +3,7 @@
 
 SBB_instrument_input_file::SBB_instrument_input_file(const char * filename)
 {
-	_file = std::fopen(filename, "r"); // open read-only
+	_file = fopen(filename, "r"); // open read-only
 	if (!_file){
 		fprintf(stderr,"ERROR couldn't open: %s\n", filename);
 		throw std::runtime_error("file open failure");
@@ -12,7 +12,7 @@ SBB_instrument_input_file::SBB_instrument_input_file(const char * filename)
 
 SBB_instrument_input_file::~SBB_instrument_input_file() 
 {
-	if (std::fclose(_file)) {
+	if (fclose(_file)) {
 		fprintf(stderr,"flose failed on file %s errno: %d\n", 
 			_file, errno);
 	}
@@ -62,7 +62,7 @@ SBB_instrument_input_file::get_records(int& length)
 	_line_buf[0] = ' ';
 	int non_comments_line_count_read = 0; 
 	char *token;
-	while(std::fgets(_line_buf,SBB_LINE_BUFFER_LENGTH,_file)){
+	while(fgets(_line_buf,SBB_LINE_BUFFER_LENGTH,_file)){
 
 		//printf("SBB CHECK file line: %s\n", _line_buf);
 

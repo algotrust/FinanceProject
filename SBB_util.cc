@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <sys/times.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <string.h>
 
 #include "SBB_util.h"
 

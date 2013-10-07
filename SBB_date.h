@@ -65,7 +65,7 @@ class SBB_date {
 		long get_yyyymmdd(){ return _year * 10000 + _month * 100 + _day; }
 
 		void show() {
-			printf("SBB_date: day: %d month: %d year: %d readable: %d\n",
+			printf("SBB_date: day: %d month: %d year: %d readable: %ld\n",
 				_day, _month, _year, get_yyyymmdd() );
 		}
 

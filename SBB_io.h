@@ -1,4 +1,5 @@
-
+#ifndef __SBB_IO_H__
+#define __SBB_IO_H__
 #include <sys/errno.h>
 #include <stdio.h>
 #include <stdexcept>
@@ -20,9 +21,9 @@ class SBB_instrument_fields {
 			Frequency=0;
 			YieldRate=0.0;
 		} 
-		~SBB_instrument_fields() {};
+		virtual ~SBB_instrument_fields() {};
 
-		void show(){
+		virtual void show(){
 			printf("ID: %s SettleDate: %d Coupon: %.2f MatDate: %d Frequency: %d Yield: %.3f\n",
 				SecurityID,
 				SettlementDate,
@@ -31,6 +32,9 @@ class SBB_instrument_fields {
 				Frequency,
 				YieldRate);
 		}
+		virtual int getAmount(){
+			return 1;
+		};
 
 		char SecurityID[SBB_INSTRUMENT_ID_LENGTH];
 		int SettlementDate;
@@ -58,19 +62,20 @@ class SBB_instrument_input_file {
 		//
 		// returns a heap allocated array of file contents
 		//
-		SBB_instrument_fields* get_records(int& length);
+		virtual SBB_instrument_fields* get_records(int& length);
 			
 		//
 		// As a convenience to the caller memory is allocated inside this class
 		// Call this to free it
 		//
-		void free_records();
+		virtual void free_records();
 
-	private:
+	protected:
 		FILE* _file;
 		char _line_buf[SBB_LINE_BUFFER_LENGTH];
 		SBB_instrument_fields *_fields_array;
-	 
+
+	private: 
 		//
 		// prevent copying
 		// 
@@ -87,3 +92,4 @@ class SBB_instrument_input_file {
 		//
 		SBB_instrument_input_file();
 };
+#endif

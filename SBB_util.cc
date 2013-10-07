@@ -16,7 +16,7 @@ SBB_util::SBB_util()
 	memset(&_start_cpu,0,sizeof(struct tms));
 	memset(&_end_cpu,0,sizeof(struct tms));
 
-	printf("system constant: clock ticks per second: %d\n", Ticks_per_second);
+	printf("system constant: clock ticks per second: %ld\n", Ticks_per_second);
 }
 
 void

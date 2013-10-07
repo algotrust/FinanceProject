@@ -14,7 +14,7 @@ SBB_instrument_input_file::~SBB_instrument_input_file()
 {
 	if (fclose(_file)) {
 		fprintf(stderr,"flose failed on file %s errno: %d\n", 
-			_file, errno);
+			(char *)_file, errno);
 	}
 }
 

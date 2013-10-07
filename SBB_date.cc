@@ -30,13 +30,13 @@ SBB_date::set_from_yyyymmdd(long yyyymmdd)
 {
 	_day = yyyymmdd % 100;	
 	if(_day < 1 || _day > 31){
-		fprintf(stderr,"invalid day (passed in long date %d) -  %d)\n", 
+		fprintf(stderr,"invalid day (passed in long date %ld) -  %d)\n", 
 		yyyymmdd, _day);
 	}
 	yyyymmdd /= 100; // strip days
 	_month = yyyymmdd % 100;
 	if(_month < 1 || _month > 12){
-		fprintf(stderr,"invalid month (passed in long date %d) - %d\n", 
+		fprintf(stderr,"invalid month (passed in long date %ld) - %d\n", 
 		yyyymmdd, _month);
 	}
 	_year = yyyymmdd / 100;

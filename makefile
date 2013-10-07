@@ -24,8 +24,8 @@ LIB_UTIL_SRC = SBB_util.cc
 LIB_UTIL_SRC_HDR = SBB_util.h
 LIB_DATE_SRC = SBB_date.cc
 LIB_DATE_SRC_HDR = SBB_date.h
-LIB_IO_SRC = SBB_io.cc
-LIB_IO_SRC_HDR = SBB_io.h
+LIB_IO_SRC = SBB_io.cc bond.cc
+LIB_IO_SRC_HDR = SBB_io.h bond.h
 LIB_CALC_SRC = Calculator.cc
 LIB_CALC_SRC_HDR = Calculator.h
 #
@@ -45,9 +45,13 @@ $(LIB_CALC_OBJ) : $(LIB_CALC_SRC_HDR)
 # 
 # the file where main() is
 MAIN_SRC = mmain.cc
+TEST_SRC = test.cc
 MAINOBJ = $(MAIN_SRC:.cc=.o) 
+TESTOBJ = $(TEST_SRC:.cc=.o)
 $(MAINOBJ) : $(LIB_UTIL_TARGET) $(LIB_CALC_OBJ)
+$(TESTOBJ) : $(LIB_UTIL_TARGET) $(LIB_CALC_OBJ)
 MAINTARGET=price_calc
+TESTTARGET=test_lib
 
 ARCHIVE_OPTIONS = rucsv
 
@@ -57,19 +61,24 @@ $(LIB_UTIL_TARGET) : $(LIB_UTIL_OBJ) $(LIB_DATE_OBJ) $(LIB_IO_OBJ)
 $(MAINTARGET) : $(MAINOBJ) $(LIB_UTIL_TARGET)
 	$(CC) $(LDFLAGS) $(MAINOBJ) $(LIB_UTIL_TARGET) $(LIB_CALC_OBJ) -o $(MAINTARGET)
 
-all : util test
-	rm -f  *.a
+$(TESTTARGET) : $(TESTOBJ) $(LIB_UTIL_TARGET)
+	$(CC) $(LDFLAGS) $(TESTOBJ) $(LIB_UTIL_TARGET) $(LIB_CALC_OBJ) -o $(TESTTARGET)
 
-test: $(MAINTARGET)
+all : util main testdrive
+
+main: $(MAINTARGET) 
+
+testdrive: $(TESTTARGET)
 
 util: $(LIB_UTIL_TARGET)
 
 clean:
 	rm -f *.o 
-	rm -f $(MAINTARGET)
+	rm -f *.a
+	rm -f $(MAINTARGET) $(TESTTARGET)
 
 clobber:
-	-rm -f *.o *.a $(MAINTARGET)
+	-rm -f *.o *.a $(MAINTARGET) $(TESTTARGET)
 
 backup: clobber
 	tar cvf ./nyu.tar *.*

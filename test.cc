@@ -1,5 +1,6 @@
 #include "Calculator.h"
 #include "bond.h"
+#include "yield_curve.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -199,15 +200,129 @@ void test_calculator(){
 	printf("Test calculator passed!\n");
 }
 
+void test_yield_curve_input1(char *yield_file){
+	int length;
+	bond* yield_data;
+	bond_input_file yield_input(yield_file);
+	yield_data = yield_input.get_records(length);
+	yield_curve yield_benchmark(yield_data, length);
+	assert(abs(yield_benchmark.get_benchmark(0)->YieldRate - 4.0)<0.0001);
+}
+
+void test_yield_curve_input2(char *yield_file){
+	int length;
+	bond* yield_data;
+	bond_input_file yield_input(yield_file);
+	yield_data = yield_input.get_records(length);
+	yield_curve yield_benchmark(yield_data, length);
+	assert(yield_benchmark.get_benchmark(1)->MaturityDate == 20111015);
+}
+
+void test_yield_curve_get_yield1(char *yield_file){
+	int length;
+	bond* yield_data;
+	bond_input_file yield_input(yield_file);
+	yield_data = yield_input.get_records(length);
+	yield_curve yield_benchmark(yield_data, length);
+	assert(abs(yield_benchmark.get_benchmark_yield(5*2) - 2.0) < 0.00001);
+}
+
+void test_yield_curve_get_yield2(char *yield_file){
+	int length;
+	bond* yield_data;
+	bond_input_file yield_input(yield_file);
+	yield_data = yield_input.get_records(length);
+	yield_curve yield_benchmark(yield_data, length);
+	assert(abs(yield_benchmark.get_benchmark_yield(15*2) - 3.0) < 0.00001);
+}
+
+void test_yield_curve_get_yield3(char *yield_file){
+	int length;
+	bond* yield_data;
+	bond_input_file yield_input(yield_file);
+	yield_data = yield_input.get_records(length);
+	yield_curve yield_benchmark(yield_data, length);
+	assert(abs(yield_benchmark.get_benchmark_yield(21*2) - 3.0) < 0.00001);
+}
+
+void test_yield_curve(char *yield_file){
+	test_yield_curve_input1(yield_file);
+	test_yield_curve_input2(yield_file);
+	test_yield_curve_get_yield1(yield_file);
+	test_yield_curve_get_yield2(yield_file);
+	printf("Test yield curve passed!\n");
+}
+
+void test_calculator_spread1(char *yield_file){
+	bond test_bond;
+	strcpy(test_bond.SecurityID, "TEST_001");
+	strcpy(test_bond.Ticker, "GM");
+	strcpy(test_bond.Quality, "AA");
+	test_bond.SettlementDate=20091115;
+	test_bond.CouponRate=3.5;
+	test_bond.MaturityDate=20111115;
+	test_bond.Frequency = 2;
+	test_bond.YieldRate = 210;
+	test_bond.Rate_type = bond::spread;
+	test_bond.Amount = -10000;
+	Calculator calc;
+
+	int length;
+	bond* yield_data;
+	bond_input_file yield_input(yield_file);
+	yield_data = yield_input.get_records(length);
+	yield_curve yield_benchmark(yield_data, length);
+
+	calc.set_yield_curve(&yield_benchmark);
+	calc.set_ytm_para((SBB_instrument_fields*)&test_bond);
+
+	assert(abs(calc.get_YTM_price() - calc.calc_price()) < 0.0001);
+	assert(abs(calc.get_YTM_price() - 100.76993556) < 0.0001);
+}
+
+void test_calculator_spread2(char *yield_file){
+	bond test_bond;
+	strcpy(test_bond.SecurityID, "TEST_001");
+	strcpy(test_bond.Ticker, "GM");
+	strcpy(test_bond.Quality, "AA");
+	test_bond.SettlementDate=20091115;
+	test_bond.CouponRate=3.9;
+	test_bond.MaturityDate=20131115;
+	test_bond.Frequency = 2;
+	test_bond.YieldRate = 130;
+	test_bond.Rate_type = bond::spread;
+	test_bond.Amount = -1000;
+	Calculator calc;
+
+	int length;
+	bond* yield_data;
+	bond_input_file yield_input(yield_file);
+	yield_data = yield_input.get_records(length);
+	yield_curve yield_benchmark(yield_data, length);
+
+	calc.set_yield_curve(&yield_benchmark);
+	calc.set_ytm_para((SBB_instrument_fields*)&test_bond);
+
+	assert(abs(calc.get_YTM_price() - 102.23117328) < 0.0001);
+}
+
+void test_calculator_spread(char *yield_file){
+	test_calculator_spread1(yield_file);
+	test_calculator_spread2(yield_file);
+	printf("Test calculator spread passed!\n");
+}
+
 
 int main(int argc, char* argv[]){
-	if(argc != 2){
-		printf("Usage: test_lib testfile\n");
+	if(argc != 3){
+		printf("Usage: test_lib testfile yield_curve_file\n");
 		exit(0);
 	}
 	test_bond();
 	test_bond_input_file(argv[1]);
 	test_calculator();
+	test_yield_curve(argv[2]);
+	test_calculator_spread(argv[2]);
 	printf("All tests passed!\n");
 }
 

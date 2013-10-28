@@ -21,6 +21,16 @@ Calculator::get_YTM_DV01(){
 	return current_dv01;
 }
 
+int
+Calculator::get_periods(){
+	return num_periods;
+}
+
+double
+Calculator::get_lgd(){
+	return lgd;
+}
+
 double
 Calculator::calc_risk(){
 	return (get_YTM_DV01() * ytm_para->getAmount()) / 100;
@@ -30,8 +40,14 @@ void
 Calculator::set_ytm_para(SBB_instrument_fields *input){
 	ytm_para = input;
 	num_periods = get_num_periods(ytm_para->SettlementDate, ytm_para->MaturityDate, ytm_para->Frequency);
+	if(((bond*)ytm_para) -> Rate_type == bond::spread){
+		double yield_bm = y_benchmark->get_benchmark_yield(num_periods);
+		((bond*)ytm_para) ->Rate_type = bond::yield;
+		ytm_para -> YieldRate = yield_bm + ytm_para->YieldRate/100;
+	}
 	current_price = calc_price();
 	current_dv01 = calc_dv01();
+	lgd = rating.LGD_given_SnP_Fitch(((bond*)ytm_para)->Quality)*((bond*)ytm_para)->Amount;
 }
 
 double

@@ -132,3 +132,39 @@ bond_input_file::free_records(){
 	delete[] bond_array;
 }
 
+void
+bond_input_file::write_results(const char *filename, bond_result* result,  int length){
+	FILE *outfile = fopen("temp_result.tmp", "w");
+
+	rewind(_file);
+
+	_line_buf[0] = ' ';
+	char *token;
+	int index = 0;
+
+	while(fgets(_line_buf,SBB_LINE_BUFFER_LENGTH,_file)){
+		if(index >= length){
+			fprintf(stderr, "error here, index is larger than length\n");
+			exit(1);
+		}
+
+		if('#' == _line_buf[0]) {
+			fprintf(outfile, "%s", _line_buf);
+			continue; // skip through comments
+		}
+
+		// the line should be:
+		// SecurityID  Ticker SettlementDate CouponRate MaturityDate Frequency Rate_type YieldRate Quality Amount
+		int temp_len = strlen(_line_buf);
+		_line_buf[temp_len-1] = 0;
+		fprintf(outfile, "%s %.3f %.3f %.3f %.3f\n", _line_buf, result[index].price, result[index].dv01, result[index].risk, result[index].lgd);
+		index++;
+	}
+	fclose(outfile);
+
+	remove(filename);
+	rename("temp_result.tmp", filename);
+
+	return;
+
+}

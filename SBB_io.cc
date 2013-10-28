@@ -32,7 +32,7 @@ SBB_instrument_input_file::get_record_count()
 		}
 		++line_count_minus_comments;
 	}
-	printf("comment count in file: %d\n", comment_count);
+//	printf("comment count in file: %d\n", comment_count);
 
 	rewind(_file);
 	//fseek(_file, 0L, SEEK_SET);

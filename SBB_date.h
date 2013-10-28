@@ -1,4 +1,5 @@
-
+#ifndef __SBB_DATE_H__
+#define __SBB_DATE_H__
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -93,5 +94,7 @@ get_number_of_periods_semiannual( SBB_date from_dt, SBB_date to_dt)
 	}
 	return semiannual_period_count;
 }
+
+#endif
 
 #endif

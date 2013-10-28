@@ -48,13 +48,21 @@ class bond : public SBB_instrument_fields {
 		int Amount;
 };
 
+struct bond_result{
+	double price;
+	double dv01;
+	double risk;
+	double lgd;
+};
+
 class bond_input_file : public SBB_instrument_input_file{
 	public:
 		bond_input_file(const char* filename):SBB_instrument_input_file(filename){};
 		bond* get_records(int& length);
 		void free_records();
+		void write_results(const char *filename,  bond_result *result, int length);
 
 	private:
-		bond *bond_array;
+			bond *bond_array;
 };
 #endif

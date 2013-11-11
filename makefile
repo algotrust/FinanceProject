@@ -56,12 +56,17 @@ $(LIB_RATING_OBJ) : $(LIBRATING_SRC_HDR)
 # the file where main() is
 MAIN_SRC = mmain.cc
 TEST_SRC = test.cc
+SERVER_SRC = sbb_server.cc
+SERVER_SRC_HDR = sbb_socket.h
 MAINOBJ = $(MAIN_SRC:.cc=.o) 
 TESTOBJ = $(TEST_SRC:.cc=.o)
+SERVEROBJ = $(SERVER_SRC:.cc=.o)
 $(MAINOBJ) : $(LIB_UTIL_TARGET) $(LIB_CALC_OBJ) 
 $(TESTOBJ) : $(LIB_UTIL_TARGET) $(LIB_CALC_OBJ) 
+$(SERVEROBJ) : $(LIB_UTIL_TARGET) $(LIB_CALC_OBJ) $(SERVER_SRC_HDR)
 MAINTARGET=price_calc
 TESTTARGET=test_lib
+SERVERTARGET=calc_server
 
 ARCHIVE_OPTIONS = rucsv
 
@@ -74,21 +79,26 @@ $(MAINTARGET) : $(MAINOBJ) $(LIB_UTIL_TARGET)
 $(TESTTARGET) : $(TESTOBJ) $(LIB_UTIL_TARGET)
 	$(CC) $(LDFLAGS) $(TESTOBJ) $(LIB_UTIL_TARGET) $(LIB_CALC_OBJ) -o $(TESTTARGET)
 
-all : util main testdrive
+$(SERVERTARGET) : $(SERVEROBJ) $(LIB_UTIL_TARGET)
+	$(CC) $(LDFLAGS) $(SERVEROBJ) $(LIB_UTIL_TARGET) $(LIB_CALC_OBJ) -o $(SERVERTARGET)
+
+all : util main testdrive server
 
 main: $(MAINTARGET) 
 
 testdrive: $(TESTTARGET)
+
+server: $(SERVERTARGET)
 
 util: $(LIB_UTIL_TARGET)
 
 clean:
 	rm -f *.o 
 	rm -f *.a
-	rm -f $(MAINTARGET) $(TESTTARGET)
+	rm -f $(MAINTARGET) $(TESTTARGET) $(SERVERTARGET)
 
 clobber:
-	-rm -f *.o *.a $(MAINTARGET) $(TESTTARGET)
+	-rm -f *.o *.a $(MAINTARGET) $(TESTTARGET) $(SERVERTARGET)
 
 backup: clobber
 	tar cvf ./nyu.tar *.*

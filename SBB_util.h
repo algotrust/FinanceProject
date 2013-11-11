@@ -1,6 +1,12 @@
+#ifndef __SBB_UTIL_H__
+#define __SBB_UTIL_H__
 
 #include <sys/times.h>
-
+#include <sys/errno.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdint.h>
 #include <stdexcept> // std::runtime_error
 
 #define START_TIMER(obj) \
@@ -17,6 +23,7 @@ class SBB_util {
 		SBB_util();
 		void start_clock();
 		void end_clock();
+		void end_clock(double& real_time, double& user_time, double& system_time);
 
 	private:
 		clock_t _start_time;
@@ -24,3 +31,11 @@ class SBB_util {
 		struct tms _start_cpu;
 		struct tms _end_cpu;
 };
+
+
+#define SBB_DEBUG() \
+	printf( "-- in function: %s\tfile: %s line: %d\n", \
+		__PRETTY_FUNCTION__, \
+		__FILE__,  \
+		__LINE__);
+#endif

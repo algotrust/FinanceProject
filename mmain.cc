@@ -2,6 +2,7 @@
 #include "bond.h"
 
 #include <stdio.h>
+#include <math.h>
 
 int main(int argc, char* argv[]){
 	if(argc != 3){
@@ -26,7 +27,7 @@ int main(int argc, char* argv[]){
 
 	int largest_long= 0, largest_short = 0;
 	char* largest_long_id, *largest_short_id;
-	double largest_risk = 0;
+	double largest_risk = 0.0;
 	char* largest_risk_id;
 	int amount = 0;
 	for(int i = 0 ; i < input_length ; i++){
@@ -37,8 +38,8 @@ int main(int argc, char* argv[]){
 		results[i].risk = risk;
 		results[i].lgd = calc.get_lgd();
 
-		if(abs(risk) > largest_risk){
-			largest_risk = abs(risk);
+		if(fabs(risk) > fabs(largest_risk)){
+			largest_risk = risk;
 			largest_risk_id = (ytm_data+i)->SecurityID;
 		}
 		total_risk += risk;
@@ -55,9 +56,9 @@ int main(int argc, char* argv[]){
 
 	input.write_results(argv[1], results, input_length);
 	FILE *f = fopen("results.txt", "w");
-	fprintf(f, "%s %d\n", largest_long_id, largest_long);
-	fprintf(f, "%s %d\n", largest_short_id, largest_short);
-	fprintf(f, "%s %.3f\n", largest_risk_id, largest_risk);
+	fprintf(f, "%d\n", largest_long);
+	fprintf(f, "%d\n", largest_short);
+	fprintf(f, "%.3f\n", largest_risk);
 	fprintf(f, "%.3f\n", total_risk);
 
 	END_TIMER(u);

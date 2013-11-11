@@ -47,6 +47,7 @@ Calculator::set_ytm_para(SBB_instrument_fields *input){
 	}
 	current_price = calc_price();
 	current_dv01 = calc_dv01();
+	if(strcmp(((bond*)ytm_para)->Quality, "GOVT") != 0)
 	lgd = rating.LGD_given_SnP_Fitch(((bond*)ytm_para)->Quality)*((bond*)ytm_para)->Amount;
 }
 
